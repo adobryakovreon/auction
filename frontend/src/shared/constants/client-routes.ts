@@ -1,4 +1,5 @@
 export const ClientRoutes = {
-    Home: '/',
-    CreateRoom: 'create-room',
-}
+	Home: '/',
+	CreateRoom: 'create-room',
+	room: 'room',
+};
