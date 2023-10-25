@@ -1,22 +1,22 @@
-import { Button, Container, Typography } from "@mui/material";
-import Box from "@mui/material/Box/Box";
-import { useState } from "react";
-import ModalWrapper from "../../shared/components/modal-wrapper/ModalWrapper";
-import { NewUserForm } from "../../shared/components/new-user-form/NewUserForm";
-import { useNavigate } from "react-router-dom";
+import { Button, Container, Typography } from '@mui/material';
+import Box from '@mui/material/Box/Box';
+import { useState } from 'react';
+import ModalWrapper from '../../shared/components/modal-wrapper/ModalWrapper';
+import { NewUserForm } from '../../shared/components/new-user-form/NewUserForm';
+import { useNavigate } from 'react-router-dom';
 
 const Homepage = () => {
-  const name = localStorage.getItem("userName") || "guest";
-  const navigate = useNavigate()
-    localStorage.removeItem("userName")
+  const name = localStorage.getItem('userName') || 'guest';
+  const navigate = useNavigate();
+  // localStorage.removeItem("userName")
   const [open, setOpen] = useState(false);
-  const [route, setRoute] = useState("");
+  const [route, setRoute] = useState('');
   const handleEnterApp = (event: React.MouseEvent<HTMLButtonElement>) => {
     console.log(event.currentTarget.value);
-    if (!localStorage.getItem("userName")) {
+    if (!localStorage.getItem('userName')) {
       setOpen(true);
       setRoute(event.currentTarget.value);
-        return
+      return;
     }
     navigate(event.currentTarget.value);
   };
@@ -25,10 +25,10 @@ const Homepage = () => {
     <Box>
       <Container
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <Typography>Welcome, {name}!</Typography>
@@ -40,7 +40,11 @@ const Homepage = () => {
           >
             Создать комнату
           </Button>
-          <Button value="find-room" variant="outlined" onClick={handleEnterApp}>
+          <Button
+            value="find-room"
+            variant="outlined"
+            onClick={handleEnterApp}
+          >
             Найти комнату
           </Button>
         </Box>
