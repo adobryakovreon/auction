@@ -27,9 +27,9 @@ const CreateRoomPage = () => {
 
   const socket = useContext(WebSocketContext);
 
-  const save = async (room: RoomType) => {
+  const save = (room: RoomType) => {
     room.host = localStorage.getItem('userName') || 'guest';
-    socket.emit('createRoomWs', { room, socketId: socket.id });
+    socket.emit('createRoomWs', { room });
     navigate(`/${ClientRoutes.room}/${room.id}`);
   };
 
@@ -37,7 +37,7 @@ const CreateRoomPage = () => {
     <FormWrapper methods={methods} onSubmit={save}>
       <Container sx={createRoomPageContainerStyle}>
         <Typography>
-            Новая комната аукциона
+          Новая комната аукциона
         </Typography>
         <Box sx={newRoomFormWrapper}>
           <Box sx={flexRowStyle}>

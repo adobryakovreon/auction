@@ -2,9 +2,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import RoomType from '../../shared/types/room-type';
 import { observer } from 'mobx-react';
 import { WebSocketContext } from '../../shared/context/web-socket-context/web-socket-context';
-import { useContext, useEffect, useState } from 'react';
+import { Suspense, useContext, useEffect, useState } from 'react';
 import Container from '@mui/material/Container/Container';
 import Button from '@mui/material/Button/Button';
+import Room from '../../shared/components/room/Room';
+import defaultValues from '../../shared/constants/room-default';
 
 type RoomPageProps = {
   room: RoomType;
@@ -15,20 +17,25 @@ const RoomPage = observer(() => {
   const { id: roomId } = useParams();
   const userName = localStorage.getItem('userName') || 'guest';
   const socket = useContext(WebSocketContext);
-  const [room, setRoom] = useState<RoomType>();
+  const [room, setRoom] = useState<RoomType>({ ...defaultValues, id: '0' });
   const [users, setUsers] = useState<string[]>([userName]);
 
   useEffect(() => {
     socket.on(`sendRoom`, (joinedRoom: RoomType) => {
-      console.log(joinedRoom);
       setRoom(joinedRoom);
       joinedRoom.playersList && setUsers([...joinedRoom.playersList]);
     });
-    socket.emit('joinRoom', { roomId, userName });
+
+    setTimeout(() => socket.emit('joinRoom', { roomId, userName }), 2000);
+
 
     socket.on(`room_join`, ({ message, joinName }) => {
       console.log(message);
       setUsers([...users, joinName]);
+    });
+
+    socket.on('room_doesnt_exist', ({ message }) => {
+      console.log(message);
     });
 
     socket.on(`room_leave`, ({ message, userName }) => {
@@ -48,10 +55,6 @@ const RoomPage = observer(() => {
   }, []);
 
   const handleDisconnect = () => {
-    socket.emit('leaveRoom', {
-      roomId,
-      userName
-    });
     navigate('/');
   };
 
@@ -62,6 +65,9 @@ const RoomPage = observer(() => {
           <h4>{user}</h4>
         )}
       </ul>
+      <Suspense fallback={<>loading...</>} >
+        <Room room={room} />
+      </Suspense>
       <Button onClick={handleDisconnect}>Покинуть комнату</Button>
     </Container>
   );
