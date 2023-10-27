@@ -6,16 +6,16 @@ import { ClientRoutes } from './shared/constants/client-routes';
 import Homepage from './pages/homepage/Homepage';
 import CreateRoomPage from './pages/create-room-page/CreateRoomPage';
 import RoomPage from './pages/room-page/RoomPage';
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext } from 'react';
 import { WebSocketContext } from './shared/context/web-socket-context/web-socket-context';
-import RoomType from './shared/types/room-type';
+import FindRoomPage from './pages/find-room-page/FindRoomPage';
 
 const AppStyle: SxProps = {
   backgroundColor: LightColors.lightGrey,
   height: '100vh',
 };
 
-function App() { 
+function App() {
   const socket = useContext(WebSocketContext);
   useEffect(() => {
     socket.on('connect', () => {
@@ -40,6 +40,7 @@ function App() {
             path={ClientRoutes.CreateRoom}
             element={<CreateRoomPage />}
           />
+          <Route path={ClientRoutes.FindRoom} element={<FindRoomPage />} />
           <Route path={`/room/:id`} element={<RoomPage />} />
         </Routes>
       </BrowserRouter>

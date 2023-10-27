@@ -9,6 +9,7 @@ type RoomType = {
 	host: string;
 	playersLimit: number;
 	startCash: number;
+	playersList?: string[];
 };
 
 export default RoomType;
