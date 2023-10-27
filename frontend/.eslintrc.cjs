@@ -15,7 +15,7 @@ module.exports = {
     "object-curly-spacing": [2, "always"],
     "no-tabs": 0,
     "dot-notation": 0,
-    "indent": 0,
+    'indent': ['error', 2, { 'SwitchCase': 1, 'ignoredNodes': ['PropertyDefinition'] }],
     "no-unused-vars": 0,
     "eol-last": 0,
     "no-return-assign": 0,
@@ -27,6 +27,6 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 0,
     'allowIndentationTabs': 0,
     'multiline-ternary': 0,
-    "no-mixed-spaces-and-tabs": 0,
+    "no-mixed-spaces-and-tabs": 1,
   },
 }

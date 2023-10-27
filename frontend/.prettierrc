@@ -15,7 +15,7 @@
     "semi": true,
     "singleQuote": true,
     "useTabs": true,
-    "tabWidth": 4,
+    "tabWidth": 2,
     "trailingComma": "es5",
     "embeddedLanguageFormatting": "auto",
     "vueIndentScriptAndStyle": false,
