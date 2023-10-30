@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import RoomType from '../../shared/types/room-type';
 import { observer } from 'mobx-react';
 import { WebSocketContext } from '../../shared/context/web-socket-context/web-socket-context';
-import { Suspense, useContext, useEffect, useState } from 'react';
+import { Suspense, useCallback, useContext, useEffect, useState } from 'react';
 import Container from '@mui/material/Container/Container';
 import Button from '@mui/material/Button/Button';
 import Room from '../../shared/components/room/Room';
@@ -20,33 +20,53 @@ const RoomPage = observer(() => {
   const [room, setRoom] = useState<RoomType>({ ...defaultValues, id: '0' });
   const [users, setUsers] = useState<string[]>([userName]);
 
-  useEffect(() => {
-    socket.on(`sendRoom`, (joinedRoom: RoomType) => {
+
+  const handleInviteAccepted = useCallback(
+    (joinedRoom: RoomType) => {
+      console.log('handleInviteAccepted');
       setRoom(joinedRoom);
       joinedRoom.playersList && setUsers([...joinedRoom.playersList]);
-    });
+    //   join && socket.emit('sendName', { userName, roomId });
+    },
+    []
+  );
 
-    setTimeout(() => socket.emit('joinRoom', { roomId, userName }), 2000);
+  const handleSendRequest = useCallback(() => {
+    socket.emit('JOIN_REQUEST', { roomId, userName });
+  }, []);
 
+  const handleUserJoinRoom = useCallback(({ message, joinName }: { message: string, joinName: string }) => {
+    console.log(message);
+    setUsers([...users, joinName]);
+  }, []);
 
-    socket.on(`room_join`, ({ message, joinName }) => {
-      console.log(message);
-      setUsers([...users, joinName]);
-    });
+  const handleUserLeaveRoom = useCallback(({ message, joinName }: { message: string, joinName: string }) => {
+    console.log(message);
+    const newUsers = users.filter(user => user !== joinName);
+    setUsers(newUsers);
+  }, []);
+
+  
+  useEffect(() => {
+    handleSendRequest();
+    socket.on(`JOIN_REQUEST_ACCEPTED`, handleInviteAccepted);
+
+    socket.on(`room_join`, handleUserJoinRoom);
+
+    socket.on(`room_leave`, handleUserLeaveRoom);
+
 
     socket.on('room_doesnt_exist', ({ message }) => {
       console.log(message);
     });
 
-    socket.on(`room_leave`, ({ message, userName }) => {
-      console.log(message);
-      setUsers(users.filter(user => user !== userName));
-    });
+    
 
     return () => {
-      socket.off('sendRoom');
+      socket.off('JOIN_REQUEST_ACCEPTED');
       socket.off(`room_join`);
       socket.off(`room_leave`);
+      socket.off('room_doesnt_exist');
       socket.emit('leaveRoom', {
         roomId,
         userName
